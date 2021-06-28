@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tatli_cesitleri_270621/Views/Menues/1_Favorites.dart';
+import 'package:tatli_cesitleri_270621/Views/Menues/4_Society.dart';
+import 'package:tatli_cesitleri_270621/Views/Menues/5_Profiles.dart';
+
+import 'Menues/2_Peak.dart';
+import 'Menues/3_HomePage.dart';
 
 void main() async {
   //ensure olayına bakmak lazm
@@ -14,9 +20,63 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
+        //appbar alanı
+        primaryColor: Colors.green,
+        //bazı butonlar, tıklanma efek rengi
         primarySwatch: Colors.blue,
+        //floating gibi butonlar
+        accentColor: Colors.black,
+        scaffoldBackgroundColor: Colors.white,
+        textTheme: TextTheme(
+          bodyText2: TextStyle(color: Colors.red),
+          subtitle1: TextStyle(color: Colors.white),
+          headline3: TextStyle(color: Colors.white),
+        ),
+        buttonTheme: ButtonTheme.of(context).copyWith(
+          buttonColor: Colors.green,
+          textTheme: ButtonTextTheme.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            //butonların arkaplan renkleri
+            primary: Colors.red,
+            //butonların kenarlarında kıvrımlı şekil
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+          ),
+        ),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      //Uygulama içindeki sayfa isimlerini tanımlıyoruz.
+      //initialRoute: "1", tanımlarsak uygulama ilk açıldığında açılacak sayfa olur. "/1" gibi başına slash koymuyoruz cunku geri butonu cıkıyor
+      // sadece '/' şeklinde tanımlama yaparsak başlangıç sayfası belirtmiş oluyoruz.
+      // aynı zamanda home: kodunu da silmemiz gerekiyor.
+      routes: {
+        '/1': (context) => Favorites(),
+        '/2': (context) => Peak(),
+        '/3': (context) => deneme(),
+        '/4': (context) => Society(),
+        '/5': (context) => Profiles(),
+      },
+      //sayfa geçişlerinde isim hatalıysa yada bir sorun yüzünden istenen sayfaya geçemezse çalışan kod.
+      //*** Hata olduğu için bunla ilgili kod yazılması daha iyi olabilir ***
+      onUnknownRoute: (settings) =>
+          MaterialPageRoute(builder: (context) => deneme()),
+
       home: StartPage(),
+      onGenerateRoute: (settings) {
+        // eğer parantezler içindeki değer case'nin karşısındaki değere eşitse çalış
+        // default eğer herhangi bir şart sağlanmıyorsa çalışır.
+        switch (settings.name) {
+          case 'deneme':
+            return MaterialPageRoute(builder: (context) => deneme());
+          default:
+            return null;
+        }
+      },
     );
   }
 }
@@ -58,8 +118,11 @@ class StartPage extends StatelessWidget {
                     flex: 18,
                     child: Stack(
                       children: [
-                        FlatButton(
+                        TextButton(
                           onPressed: () {
+                            //Navigator.push a Named eklendiği zaman MaterialApp route kısmında tanımlanan map yapısındaki sayfalara ulaşabiliyoruz.
+                            Navigator.pushNamed(context, "/3");
+                            //MaterialPageRoute(builder: (context) => Favorites()),
                             //Navigator.pushNamed(context, HomePage.routeName);
                           },
                           child: Container(

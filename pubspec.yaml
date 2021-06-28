@@ -18,7 +18,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   flutter:
@@ -48,8 +48,8 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/Materials/
-    - assets/Tatlilar/
-    - assets/Icons/Giris_Yap/
+  #  - assets/Tatlilar/
+  # - assets/Icons/Giris_Yap/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
