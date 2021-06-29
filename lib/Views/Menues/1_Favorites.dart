@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tatli_cesitleri_270621/Models/PageManagement.dart' as route;
 
 class Favorites extends StatelessWidget {
-  const Favorites({Key? key}) : super(key: key);
+  static const routeName = "/1";
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,9 @@ class Favorites extends StatelessWidget {
                     },
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushReplacementNamed(context, route.homePage);
+                },
                 child: Text('TextButton'),
               ),
             ),

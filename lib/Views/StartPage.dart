@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:tatli_cesitleri_270621/Views/Menues/1_Favorites.dart';
-import 'package:tatli_cesitleri_270621/Views/Menues/4_Society.dart';
-import 'package:tatli_cesitleri_270621/Views/Menues/5_Profiles.dart';
+import 'package:tatli_cesitleri_270621/Models/PageManagement.dart' as route;
+//status bar gizlemek için çağırdığımız kütüphane
+import 'package:flutter/services.dart';
 
 import 'Menues/2_Peak.dart';
 import 'Menues/3_HomePage.dart';
 
 void main() async {
-  //ensure olayına bakmak lazm
+  //Firebase ile ilgili***
   //WidgetsFlutterBinding.ensureInitialized();
   //await Firebase.initializeApp();
+
+  //aşağıdaki 3 satır kod statusbar ı transparent hale getiriyor
+  /*SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.light));*/
   return runApp(MyApp());
 }
 
@@ -18,7 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Argedik',
       theme: ThemeData(
         //appbar alanı
         primaryColor: Colors.green,
@@ -26,7 +31,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         //floating gibi butonlar
         accentColor: Colors.black,
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: Colors.lightGreenAccent,
+        //appbar alanı
+        //appBarTheme: AppBarTheme(color: Colors.green),
+        //alttaki kodun ne olduğuna bakılacak ***
+        //visualDensity: VisualDensity.adaptivePlatformDensity
+
         textTheme: TextTheme(
           bodyText2: TextStyle(color: Colors.red),
           subtitle1: TextStyle(color: Colors.white),
@@ -54,29 +64,38 @@ class MyApp extends StatelessWidget {
       //initialRoute: "1", tanımlarsak uygulama ilk açıldığında açılacak sayfa olur. "/1" gibi başına slash koymuyoruz cunku geri butonu cıkıyor
       // sadece '/' şeklinde tanımlama yaparsak başlangıç sayfası belirtmiş oluyoruz.
       // aynı zamanda home: kodunu da silmemiz gerekiyor.
-      routes: {
-        '/1': (context) => Favorites(),
-        '/2': (context) => Peak(),
-        '/3': (context) => deneme(),
-        '/4': (context) => Society(),
-        '/5': (context) => Profiles(),
+      /*routes: {
+        Favorites.routeName: (context) => Favorites(),
+        Peak.routeName: (context) => Peak(),
+        deneme.routeName: (context) => deneme(),
+        Society.routeName: (context) => Society(),
+        Profiles.routeName: (context) => Profiles(),
       },
+        */
       //sayfa geçişlerinde isim hatalıysa yada bir sorun yüzünden istenen sayfaya geçemezse çalışan kod.
-      //*** Hata olduğu için bunla ilgili kod yazılması daha iyi olabilir ***
+      //Hata olduğu için bunla ilgili kod yazılması daha iyi olabilir ***
       onUnknownRoute: (settings) =>
-          MaterialPageRoute(builder: (context) => deneme()),
+          MaterialPageRoute(builder: (context) => HomePage()),
 
       home: StartPage(),
+
+      //ilk sayfa
+      initialRoute: "/",
+      onGenerateRoute: route.generateRoute,
+
+      /*
+        //Koşula göre sayfa geçişleri yapmak istiyorsak kullandığımız kod onGenerateRoute
       onGenerateRoute: (settings) {
         // eğer parantezler içindeki değer case'nin karşısındaki değere eşitse çalış
         // default eğer herhangi bir şart sağlanmıyorsa çalışır.
         switch (settings.name) {
-          case 'deneme':
+          case deneme.routeName:
             return MaterialPageRoute(builder: (context) => deneme());
           default:
             return null;
         }
       },
+      */
     );
   }
 }
@@ -84,6 +103,8 @@ class MyApp extends StatelessWidget {
 class StartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    //import 'package:flutter/services.dart kütüphanesi sayesinde statusbar(telefonun en üstündeki saat pil vs) gizleme
+    SystemChrome.setEnabledSystemUIOverlays([]);
     double genislik = MediaQuery.of(context).size.width;
     double yukseklik = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -121,7 +142,8 @@ class StartPage extends StatelessWidget {
                         TextButton(
                           onPressed: () {
                             //Navigator.push a Named eklendiği zaman MaterialApp route kısmında tanımlanan map yapısındaki sayfalara ulaşabiliyoruz.
-                            Navigator.pushNamed(context, "/3");
+                            Navigator.pushReplacementNamed(
+                                context, route.pageManagement);
                             //MaterialPageRoute(builder: (context) => Favorites()),
                             //Navigator.pushNamed(context, HomePage.routeName);
                           },

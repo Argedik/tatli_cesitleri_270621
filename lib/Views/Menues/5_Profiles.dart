@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Profiles extends StatelessWidget {
-  const Profiles({Key? key}) : super(key: key);
+  static const routeName = "/5";
 
   @override
   Widget build(BuildContext context) {

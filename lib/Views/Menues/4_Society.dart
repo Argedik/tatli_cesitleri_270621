@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Society extends StatelessWidget {
-  const Society({Key? key}) : super(key: key);
+  static const routeName = "/4";
 
   @override
   Widget build(BuildContext context) {

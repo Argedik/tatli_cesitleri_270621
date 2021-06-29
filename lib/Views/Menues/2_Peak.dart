@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Peak extends StatelessWidget {
-  const Peak({Key? key}) : super(key: key);
+  static const routeName = "/2";
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +15,11 @@ class Peak extends StatelessWidget {
             SizedBox(
               height: 150,
               width: 200,
-              child: Container(
-                child: Text("Peak Sayfası"),
-                decoration: BoxDecoration(shape: BoxShape.rectangle),
+              child: Center(
+                child: Container(
+                  child: Text("Peak Sayfası"),
+                  decoration: BoxDecoration(shape: BoxShape.rectangle),
+                ),
               ),
             )
           ],
