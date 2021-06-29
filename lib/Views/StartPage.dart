@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:tatli_cesitleri_270621/Models/PageManagement.dart' as route;
 //status bar gizlemek için çağırdığımız kütüphane
 import 'package:flutter/services.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'Menues/2_Peak.dart';
 import 'Menues/3_HomePage.dart';
 
 void main() async {
   //Firebase ile ilgili***
-  //WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+  //eski firebase initialize kodlaması
   //await Firebase.initializeApp();
 
   //aşağıdaki 3 satır kod statusbar ı transparent hale getiriyor
@@ -19,6 +22,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -65,13 +69,13 @@ class MyApp extends StatelessWidget {
       // sadece '/' şeklinde tanımlama yaparsak başlangıç sayfası belirtmiş oluyoruz.
       // aynı zamanda home: kodunu da silmemiz gerekiyor.
       /*routes: {
-        Favorites.routeName: (context) => Favorites(),
-        Peak.routeName: (context) => Peak(),
-        deneme.routeName: (context) => deneme(),
-        Society.routeName: (context) => Society(),
-        Profiles.routeName: (context) => Profiles(),
-      },
-        */
+                Favorites.routeName: (context) => Favorites(),
+                Peak.routeName: (context) => Peak(),
+                deneme.routeName: (context) => deneme(),
+                Society.routeName: (context) => Society(),
+                Profiles.routeName: (context) => Profiles(),
+              },
+            */
       //sayfa geçişlerinde isim hatalıysa yada bir sorun yüzünden istenen sayfaya geçemezse çalışan kod.
       //Hata olduğu için bunla ilgili kod yazılması daha iyi olabilir ***
       onUnknownRoute: (settings) =>
@@ -84,18 +88,18 @@ class MyApp extends StatelessWidget {
       onGenerateRoute: route.generateRoute,
 
       /*
-        //Koşula göre sayfa geçişleri yapmak istiyorsak kullandığımız kod onGenerateRoute
-      onGenerateRoute: (settings) {
-        // eğer parantezler içindeki değer case'nin karşısındaki değere eşitse çalış
-        // default eğer herhangi bir şart sağlanmıyorsa çalışır.
-        switch (settings.name) {
-          case deneme.routeName:
-            return MaterialPageRoute(builder: (context) => deneme());
-          default:
-            return null;
-        }
-      },
-      */
+      //Koşula göre sayfa geçişleri yapmak istiyorsak kullandığımız kod onGenerateRoute
+    onGenerateRoute: (settings) {
+      // eğer parantezler içindeki değer case'nin karşısındaki değere eşitse çalış
+      // default eğer herhangi bir şart sağlanmıyorsa çalışır.
+      switch (settings.name) {
+        case deneme.routeName:
+          return MaterialPageRoute(builder: (context) => deneme());
+        default:
+          return null;
+      }
+    },
+    */
     );
   }
 }
