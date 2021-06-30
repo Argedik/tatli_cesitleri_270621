@@ -8,11 +8,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Menues/2_Peak.dart';
 import 'Menues/3_HomePage.dart';
 
-void main() async {
+Future<void> main() async {
   //Firebase ile ilgili***
   WidgetsFlutterBinding.ensureInitialized();
   //eski firebase initialize kodlaması
-  //await Firebase.initializeApp();
+  await Firebase.initializeApp();
 
   //aşağıdaki 3 satır kod statusbar ı transparent hale getiriyor
   /*SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -81,7 +81,14 @@ class MyApp extends StatelessWidget {
       onUnknownRoute: (settings) =>
           MaterialPageRoute(builder: (context) => HomePage()),
 
-      home: StartPage(),
+      home: FutureBuilder(future: _initialization,builder: (context,snapshot){
+        if(snapshot.hasError){
+          return Center(child: Text("Beklenmeyen bir sorun oluştu"),);
+        }else if(snapshot.hasData){
+          return StartPage();
+        }else
+          return Center(child: CircularProgressIndicator(),);
+      })
 
       //ilk sayfa
       initialRoute: "/",
