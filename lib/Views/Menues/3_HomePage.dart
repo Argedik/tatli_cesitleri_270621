@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tatli_cesitleri_270621/Models/Cards.dart';
 import 'package:tatli_cesitleri_270621/Views/Menues/Details/HomePageDetails.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = "/3";
@@ -10,6 +11,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _database = FirebaseFirestore.instance;
+
   final List<String> _resimler = [
     'assets/Pictures/Asure.jpg',
     'assets/Pictures/Dondurma.jpg',
@@ -49,9 +52,13 @@ class _HomePageState extends State<HomePage> {
   ];
   @override
   Widget build(BuildContext context) {
+    final Yemekler = _database.collection("Yemekler");
+    final tarhana = Yemekler.doc('tarhana');
+
     double yukseklik = MediaQuery.of(context).size.height;
     int drawerSettingNameColors = 0xffF5A31A;
     int drawerSettingIconColors = 0xffD32626;
+
     final Color text1 = Color(0xffD32626);
     final Color text2 = Color(0xffF5A31A);
     final Color text3 = Color(0xff11698E);
@@ -98,6 +105,44 @@ class _HomePageState extends State<HomePage> {
                   itemCount: _resimler.length,
                   itemBuilder: (BuildContext context, int index) => Column(
                     children: [
+                      Text("absürt"),
+                      Text("absürt"),
+                      Divider(),
+                      StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                        stream: Yemekler.snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> asyncSnapshot) {
+                          if (asyncSnapshot.hasError) {
+                            return Center(
+                              child: Text(
+                                  "Hata oluştu daha sonra tekrar deneyiniz."),
+                            );
+                          } else {
+                            if (!asyncSnapshot.hasData) {
+                              return Center(child: CircularProgressIndicator());
+                            } else {
+                              List<DocumentSnapshot> YemekListesi =
+                                  asyncSnapshot.data!.docs;
+                              return Flexible(
+                                child: ListView.builder(
+                                    itemCount: YemekListesi.length,
+                                    itemBuilder: (context, index) {
+                                      return Card(
+                                        child: ListTile(
+                                          title: Text(YemekListesi[index]
+                                              .data()['Açıklama']),
+                                          subtitle: Text(YemekListesi[index]
+                                              .data()['kaynaklar']),
+                                        ),
+                                      );
+                                    }),
+                              );
+                            }
+                          }
+                        },
+                      ),
+                      Text("absürt"),
+                      Text("absürt"),
                       Expanded(
                         //Kartların dizaynları
                         child: GestureDetector(

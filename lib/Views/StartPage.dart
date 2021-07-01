@@ -22,7 +22,6 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -81,7 +80,8 @@ class MyApp extends StatelessWidget {
       onUnknownRoute: (settings) =>
           MaterialPageRoute(builder: (context) => HomePage()),
 
-      home: FutureBuilder(future: _initialization,builder: (context,snapshot){
+      home: StartPage(),
+      /*home: FutureBuilder(future: _initialization,builder: (context,snapshot){
         if(snapshot.hasError){
           return Center(child: Text("Beklenmeyen bir sorun oluştu"),);
         }else if(snapshot.hasData){
@@ -89,7 +89,7 @@ class MyApp extends StatelessWidget {
         }else
           return Center(child: CircularProgressIndicator(),);
       })
-
+*/
       //ilk sayfa
       initialRoute: "/",
       onGenerateRoute: route.generateRoute,
