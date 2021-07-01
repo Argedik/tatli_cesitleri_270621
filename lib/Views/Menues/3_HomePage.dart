@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tatli_cesitleri_270621/Dao/Firebase.dart';
 import 'package:tatli_cesitleri_270621/Models/Cards.dart';
+import 'package:tatli_cesitleri_270621/Models/Foods.dart';
 import 'package:tatli_cesitleri_270621/Views/Menues/Details/HomePageDetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = "/3";
@@ -73,168 +76,171 @@ class _HomePageState extends State<HomePage> {
       text5,
       text6,
     ];
-    return Scaffold(
-      backgroundColor: Colors.lightBlueAccent[100],
-      appBar: buildAppBar(yukseklik),
-      drawer: buildDrawer(drawerSettingNameColors, drawerSettingIconColors),
-      body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment(-1.3, -1.3),
-              end: Alignment(1.3, 1.3),
-              colors: [Colors.yellowAccent, Colors.redAccent],
+    return ChangeNotifierProvider<Firebase>(
+      create: (BuildContext context) => Firebase(),
+      builder: (context, child) => Scaffold(
+        backgroundColor: Colors.lightBlueAccent[100],
+        appBar: buildAppBar(yukseklik),
+        drawer: buildDrawer(drawerSettingNameColors, drawerSettingIconColors),
+        body: SafeArea(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment(-1.3, -1.3),
+                end: Alignment(1.3, 1.3),
+                colors: [Colors.yellowAccent, Colors.redAccent],
+              ),
+              border: Border(
+                top: BorderSide(color: Colors.orangeAccent),
+              ),
             ),
-            border: Border(
-              top: BorderSide(color: Colors.orangeAccent),
-            ),
-          ),
-          padding: EdgeInsets.only(left: 15.0, right: 15.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: GridView.builder(
-                  shrinkWrap: true,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 20.0,
-                    crossAxisSpacing: 20.0,
-                    childAspectRatio: (137 / 150),
-                  ),
-                  padding: EdgeInsets.all(5.0),
-                  itemCount: _resimler.length,
-                  itemBuilder: (BuildContext context, int index) => Column(
-                    children: [
-                      Text("absürt"),
-                      Text("absürt"),
-                      Divider(),
-                      StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                        stream: Yemekler.snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> asyncSnapshot) {
-                          if (asyncSnapshot.hasError) {
-                            return Center(
-                              child: Text(
-                                  "Hata oluştu daha sonra tekrar deneyiniz."),
-                            );
-                          } else {
-                            if (!asyncSnapshot.hasData) {
-                              return Center(child: CircularProgressIndicator());
-                            } else {
-                              List<DocumentSnapshot> YemekListesi =
-                                  asyncSnapshot.data!.docs;
-                              return Flexible(
-                                child: ListView.builder(
-                                    itemCount: YemekListesi.length,
-                                    itemBuilder: (context, index) {
-                                      return Card(
-                                        child: ListTile(
-                                          title: Text(YemekListesi[index]
-                                              .data()['Açıklama']),
-                                          subtitle: Text(YemekListesi[index]
-                                              .data()['kaynaklar']),
-                                        ),
-                                      );
-                                    }),
+            padding: EdgeInsets.only(left: 15.0, right: 15.0),
+            child: Column(
+              children: [
+                StreamBuilder<List<Food>>(
+                  stream: Provider.of<Firebase>(context, listen: false)
+                      .getFoodList(),
+                  builder: (BuildContext context, asyncSnapshot) {
+                    if (asyncSnapshot.hasError) {
+                      print(asyncSnapshot.error);
+                      print(asyncSnapshot);
+                      return Center(
+                        child: Text("Hata oluştu daha sonra tekrar deneyiniz."),
+                      );
+                    } else {
+                      if (!asyncSnapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      } else {
+                        List<Food> YemekListesi = asyncSnapshot.data!;
+                        return Flexible(
+                          child: ListView.builder(
+                              itemCount: YemekListesi.length,
+                              itemBuilder: (context, index) {
+                                //print(asyncSnapshot);
+                                //print(YemekListesi.length);
+                                //print(index);
+                                print(YemekListesi[index].id);
+                                return Card(
+                                  child: ListTile(
+                                    title: Text(
+                                      "${YemekListesi[index].foodname} absürt osman",
+                                      style: TextStyle(color: Colors.black),
+                                    ),
+                                    subtitle: Text(YemekListesi[index].id),
+                                  ),
+                                );
+                              }),
+                        );
+                      }
+                    }
+                  },
+                ),
+                Expanded(
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 20.0,
+                      crossAxisSpacing: 20.0,
+                      childAspectRatio: (137 / 150),
+                    ),
+                    padding: EdgeInsets.all(5.0),
+                    itemCount: _resimler.length,
+                    itemBuilder: (BuildContext context, int index) => Column(
+                      children: [
+                        Expanded(
+                          //Kartların dizaynları
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HomePageDetails(
+                                    description: _yemeklerinAciklamalari[index],
+                                    product: _yemekler[index],
+                                    image: _resimler[index],
+                                    renk: kartlar[index % 6].renk,
+                                    id: kartlar[index % 6].id,
+                                  ),
+                                ),
                               );
-                            }
-                          }
-                        },
-                      ),
-                      Text("absürt"),
-                      Text("absürt"),
-                      Expanded(
-                        //Kartların dizaynları
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => HomePageDetails(
-                                  description: _yemeklerinAciklamalari[index],
-                                  product: _yemekler[index],
-                                  image: _resimler[index],
-                                  renk: kartlar[index % 6].renk,
-                                  id: kartlar[index % 6].id,
+                            },
+                            child: Container(
+                              margin: EdgeInsets.all(5.0),
+                              padding: EdgeInsets.only(
+                                  left: 9.0, right: 9.0, top: 6.0),
+                              height: 180,
+                              width: 137,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(44.0),
+                                gradient: LinearGradient(
+                                  begin: Alignment(0.95, -1.0),
+                                  end: Alignment(-1.0, 1.0),
+                                  stops: [0.0, 0.197, 0.678, 1.0],
+                                  //colors: _renkler[index % 6],
+                                  colors: kartlar[index % 6].kartinRengi,
                                 ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0x29000000),
+                                    offset: Offset(0, 8),
+                                    blurRadius: 6,
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                          child: Container(
-                            margin: EdgeInsets.all(5.0),
-                            padding: EdgeInsets.only(
-                                left: 9.0, right: 9.0, top: 6.0),
-                            height: 180,
-                            width: 137,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(44.0),
-                              gradient: LinearGradient(
-                                begin: Alignment(0.95, -1.0),
-                                end: Alignment(-1.0, 1.0),
-                                stops: [0.0, 0.197, 0.678, 1.0],
-                                //colors: _renkler[index % 6],
-                                colors: kartlar[index % 6].kartinRengi,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0x29000000),
-                                  offset: Offset(0, 8),
-                                  blurRadius: 6,
-                                ),
-                              ],
-                            ),
 
-                            //Kartların içerikleri
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  flex: 5,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(15.0),
-                                    child: Container(
-                                      height: 90,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: const Color(0x29000000),
-                                            offset: Offset(0, 8),
-                                            blurRadius: 6,
+                              //Kartların içerikleri
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    flex: 5,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(15.0),
+                                      child: Container(
+                                        height: 90,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: const Color(0x29000000),
+                                              offset: Offset(0, 8),
+                                              blurRadius: 6,
+                                            ),
+                                          ],
+                                          color: Colors.blue,
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                          image: DecorationImage(
+                                            image: AssetImage(_resimler[index]),
+                                            fit: BoxFit.cover,
                                           ),
-                                        ],
-                                        color: Colors.blue,
-                                        borderRadius:
-                                            BorderRadius.circular(20.0),
-                                        image: DecorationImage(
-                                          image: AssetImage(_resimler[index]),
-                                          fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Text(
-                                    _yemekler[index],
-                                    style: TextStyle(
-                                        color: _metinler[index % 6],
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20.0),
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.fade,
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      _yemekler[index],
+                                      style: TextStyle(
+                                          color: _metinler[index % 6],
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20.0),
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.fade,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

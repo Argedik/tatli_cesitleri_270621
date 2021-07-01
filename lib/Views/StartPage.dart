@@ -4,6 +4,7 @@ import 'package:tatli_cesitleri_270621/Models/PageManagement.dart' as route;
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
 
 import 'Menues/2_Peak.dart';
 import 'Menues/3_HomePage.dart';
