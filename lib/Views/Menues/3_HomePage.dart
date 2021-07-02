@@ -5,6 +5,7 @@ import 'package:tatli_cesitleri_270621/Models/Foods.dart';
 import 'package:tatli_cesitleri_270621/Views/Menues/Details/HomePageDetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = "/3";
@@ -14,8 +15,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _database = FirebaseFirestore.instance;
-
   final List<String> _resimler = [
     'assets/Pictures/Asure.jpg',
     'assets/Pictures/Dondurma.jpg',
@@ -55,8 +54,8 @@ class _HomePageState extends State<HomePage> {
   ];
   @override
   Widget build(BuildContext context) {
-    final Yemekler = _database.collection("Yemekler");
-    final tarhana = Yemekler.doc('tarhana');
+    //final Yemekler = _database.collection("Yemekler");
+    //final tarhana = Yemekler.doc('tarhana');
 
     double yukseklik = MediaQuery.of(context).size.height;
     int drawerSettingNameColors = 0xffF5A31A;
@@ -82,6 +81,14 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.lightBlueAccent[100],
         appBar: buildAppBar(yukseklik),
         drawer: buildDrawer(drawerSettingNameColors, drawerSettingIconColors),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async {
+            FirebaseStorage _storage = FirebaseStorage.instance;
+            Reference refFoods = _storage.ref().child("Dondurma.jpg");
+            //var photoUrl =await refFoods.child("Dondurma.jpg").getDownloadURL();
+            print(refFoods);
+          },
+        ),
         body: SafeArea(
           child: Container(
             decoration: BoxDecoration(
@@ -97,6 +104,9 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.only(left: 15.0, right: 15.0),
             child: Column(
               children: [
+                CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        "https://firebasestorage.googleapis.com/v0/b/tatli-cesitleri-645ac.appspot.com/o/Foods%2FAsure.jpg?alt=media&token=de8748bb-1c66-4a99-ad2c-c07292e16b3d")),
                 StreamBuilder<List<Food>>(
                   stream: Provider.of<Firebase>(context, listen: false)
                       .getFoodList(),
@@ -116,17 +126,31 @@ class _HomePageState extends State<HomePage> {
                           child: ListView.builder(
                               itemCount: YemekListesi.length,
                               itemBuilder: (context, index) {
-                                //print(asyncSnapshot);
-                                //print(YemekListesi.length);
-                                //print(index);
-                                print(YemekListesi[index].id);
-                                return Card(
-                                  child: ListTile(
-                                    title: Text(
-                                      "${YemekListesi[index].foodname} absürt osman",
-                                      style: TextStyle(color: Colors.black),
+                                return Dismissible(
+                                  key: UniqueKey(),
+                                  direction: DismissDirection.horizontal,
+                                  background: Container(
+                                    alignment: Alignment.centerRight,
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
                                     ),
-                                    subtitle: Text(YemekListesi[index].id),
+                                    color: Colors.redAccent,
+                                  ),
+                                  onDismissed: (_) async {
+                                    await Provider.of<Firebase>(context,
+                                            listen: false)
+                                        .deleteFood(YemekListesi[index]);
+                                  },
+                                  child: Card(
+                                    color: Colors.white70,
+                                    child: ListTile(
+                                      title: Text(
+                                        "${YemekListesi[index].foodname} absürt osman",
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                      subtitle: Text(YemekListesi[index].id),
+                                    ),
                                   ),
                                 );
                               }),
