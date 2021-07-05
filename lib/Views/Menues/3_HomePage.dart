@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:tatli_cesitleri_270621/Dao/Firebase.dart';
 import 'package:tatli_cesitleri_270621/Models/Cards.dart';
@@ -6,6 +8,7 @@ import 'package:tatli_cesitleri_270621/Views/Menues/Details/HomePageDetails.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = "/3";
@@ -52,6 +55,21 @@ class _HomePageState extends State<HomePage> {
     "Sütlaç",
     "Sütlü Nuriye",
   ];
+
+  late File _image;
+  final picker = ImagePicker();
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.camera);
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print("Resim seçilmedi");
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     //final Yemekler = _database.collection("Yemekler");
@@ -84,7 +102,7 @@ class _HomePageState extends State<HomePage> {
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             FirebaseStorage _storage = FirebaseStorage.instance;
-            Reference refFoods = _storage.ref().child("Dondurma.jpg");
+            Reference refFoods = _storage.ref().child("Asure.jpg");
             //var photoUrl =await refFoods.child("Dondurma.jpg").getDownloadURL();
             print(refFoods);
           },
